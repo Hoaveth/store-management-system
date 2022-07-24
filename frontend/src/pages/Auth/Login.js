@@ -1,27 +1,35 @@
 import React, { useEffect, useState } from "react";
 import { EMPTY_STRING } from "../../utils/constants";
-import { loginUser } from "../../features/auth/authOperations";
-import "./Login.css";
-import { useDispatch, useSelector } from "react-redux";
+import "./styles/Login.css";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
-  const [username, setUsername] = useState(EMPTY_STRING);
-  const [password, setPassword] = useState(EMPTY_STRING);
+  const [formData, setFormData] = useState({
+    userName: EMPTY_STRING,
+    password: EMPTY_STRING,
+  });
+  const { userName, password } = formData;
+
   const { isAuthenticated } = useSelector((state) => state.auth);
 
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   useEffect(() => {
     if (isAuthenticated) {
       navigate("/dashboard", { replace: true });
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, navigate]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(loginUser(username, password));
+  };
+
+  const handleInputChange = (e) => {
+    setFormData((prevState) => ({
+      ...prevState,
+      [e.target.name]: e.target.value,
+    }));
   };
 
   return (
@@ -32,19 +40,21 @@ const Login = () => {
           <label>Username</label>
           <input
             type="username"
+            name="userName"
             className="form-control"
             placeholder="Enter username"
-            onChange={(e) => setUsername(e.target.value)}
-            value={username}
+            onChange={handleInputChange}
+            value={userName}
           />
         </div>
         <div className="mb-3">
           <label>Password</label>
           <input
             type="password"
+            name="password"
             className="form-control"
             placeholder="Enter password"
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={handleInputChange}
             value={password}
           />
         </div>
@@ -53,6 +63,9 @@ const Login = () => {
             Submit
           </button>
         </div>
+        <p className="forgot-password text-right">
+          No account? <a href="/sign_up">Create an account now.</a>
+        </p>
       </form>
     </div>
   );

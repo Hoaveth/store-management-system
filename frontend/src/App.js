@@ -10,7 +10,7 @@ import Login from "./pages/Auth/Login";
 import CheckManagement from "./pages/Check_Management/CheckManagement";
 import CreditManagement from "./pages/Credit_Management/CreditManagement";
 import Dashboard from "./pages/Dashboard/Dashboard";
-import SignUp from "./pages/SignUp/SignUp";
+import SignUp from "./pages/Auth/SignUp";
 
 function App() {
   const { isAuthenticated } = useSelector((state) => state.auth);

@@ -27,8 +27,6 @@ const saveState = (state) => {
   } catch (e) {}
 };
 
-const persistedState = loadState();
-
 //setup store
 const store = configureStore({
   reducer,
