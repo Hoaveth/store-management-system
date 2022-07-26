@@ -12,6 +12,19 @@ const initialState = {
 };
 
 //Register user
+export const login = createAsyncThunk("auth/login", async (user, thunkAPI) => {
+  try {
+    return await authService.login(user);
+  } catch (error) {
+    const message =
+      (error.response && error.response.data && error.response.data.message) ||
+      error.message ||
+      error.toString();
+    return thunkAPI.rejectWithValue(message);
+  }
+});
+
+//Register user
 export const register = createAsyncThunk(
   "auth/register",
   async (user, thunkAPI) => {
@@ -29,6 +42,10 @@ export const register = createAsyncThunk(
   }
 );
 
+export const logout = createAsyncThunk("auth/logout", async () => {
+  await authService.logout();
+});
+
 const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -43,10 +60,6 @@ const authSlice = createSlice({
       state.user_auth = action.payload;
       state.isAuthenticated = true;
     },
-    logout_user: (state, action) => {
-      state.user_auth = null;
-      state.isAuthenticated = false;
-    },
   },
   extraReducers: (builder) => {
     builder
@@ -56,9 +69,28 @@ const authSlice = createSlice({
       .addCase(register.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
+        state.isAuthenticated = true;
         state.user_auth = action.payload;
       })
       .addCase(register.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
+      })
+      .addCase(logout.fulfilled, (state) => {
+        state.user_auth = null;
+        state.isAuthenticated = false;
+      })
+      .addCase(login.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(login.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.isAuthenticated = true;
+        state.user_auth = action.payload;
+      })
+      .addCase(login.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload;

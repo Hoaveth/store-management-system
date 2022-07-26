@@ -1,6 +1,12 @@
-import React, { useState } from "react";
-import { EMPTY_STRING } from "../../utils/constants";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { EMPTY_STRING, ROLE_USER } from "../../utils/constants";
+import { toast } from "react-toastify";
+import { register, reset } from "../../features/auth/authSlice";
+
 import "./styles/Sign_Up.css";
+import Spinner from "../../components/Spinner";
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
@@ -13,6 +19,22 @@ const SignUp = () => {
 
   const { firstName, lastName, userName, password, password2 } = formData;
 
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { user_auth, isLoading, isError, isSuccess, message } = useSelector(
+    (state) => state.auth
+  );
+
+  useEffect(() => {
+    if (isError) {
+      toast.error(message);
+    }
+    if (isSuccess || user_auth) {
+      navigate("/dashboard");
+    }
+    dispatch(reset());
+  }, [user_auth, isError, isSuccess, message, dispatch, navigate]);
+
   const handleInputChange = (e) => {
     setFormData((prevState) => ({
       ...prevState,
@@ -22,8 +44,23 @@ const SignUp = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (password !== password2) {
+      toast.error("Passwords do not match");
+    } else {
+      const userData = {
+        firstName,
+        lastName,
+        userName,
+        password,
+        role: ROLE_USER,
+      };
+      dispatch(register(userData));
+    }
   };
 
+  if (isLoading) {
+    return <Spinner />;
+  }
   return (
     <div className="auth-inner">
       <form onSubmit={handleSubmit}>

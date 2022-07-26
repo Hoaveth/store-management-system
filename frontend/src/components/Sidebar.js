@@ -1,7 +1,7 @@
 import React from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { NavLink, useNavigate } from "react-router-dom";
-import { logout_user } from "../features/auth/authSlice";
+import { logout, reset } from "../features/auth/authSlice";
 
 import "./styles/Sidebar.css";
 
@@ -9,8 +9,12 @@ function Sidebar() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const logoutWithRedirect = async () => {
-    await dispatch(logout_user());
+  const { user_auth } = useSelector((state) => state.auth);
+
+  const handleLogout = () => {
+    //Remove localstorage item
+    dispatch(logout());
+    dispatch(reset());
     navigate("/");
   };
 
@@ -19,7 +23,7 @@ function Sidebar() {
       <div className="sidebar-content">
         <div className="user">
           {/* Avatar and username later */}
-          <p>Hello, User 1 </p>
+          <p>Hello, {user_auth.userName} </p>
         </div>
         <nav className="links">
           <ul>
@@ -33,7 +37,7 @@ function Sidebar() {
               <NavLink to="/check_management">
                 <span>Check Management</span>
               </NavLink>
-              <button onClick={() => logoutWithRedirect()}>
+              <button onClick={() => handleLogout()}>
                 <span>Logout</span>
               </button>
             </li>

@@ -3,10 +3,10 @@
 /* variables */
 :root {
   --heading-color: #444;
-  --text-color: #999;
-  --primary-color: #8d69f1;
+  --text-color: black;
+  --primary-color: #F4F4F4;
   --highlight-color: #d13267;
-  --bg-color: #f4f4f4;
+  --bg-color: rgb(219, 219, 219);
 }
 
 
@@ -15,7 +15,7 @@
 }
 
 body {
-  background: lightgray !important;
+  background: #FAFAFA !important;
   min-height: 100vh;
   display: flex;
   font-weight: 400;
@@ -48,6 +48,122 @@ body, html, .App, #root, .app-container {
 
 .main-content {
   width: 100%;
-  height: 100%;
+  margin: 20px;
+  background-color: #FAFAFA;
+  min-width: 350px;
+
+}
+
+
+/*Common*/
+.page-content {
+  max-width: 1300px;
+  margin: 30px auto;
+}
+
+.page-header {
+  margin: 10px;
+}
+
+.page-title {
+  font-size: 34px;
+  font-weight: 600 !important;
+}
+
+.page-content-title {
+  font-size: 20px;
+  font-weight: 500 !important;
+}
+
+.tab {
+  --animation-time: 200ms;
+
+  position: relative;
+  overflow: hidden;
+}
+
+.tab {
+  --animation-time: 200ms;
+
+  position: relative;
+  overflow: hidden;
+}
+
+.tab::after {
+  content: '';
+  display: block;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: var(--underline-size, 2px);
+  position: absolute;
+  background-color: var(--underline-color, currentColor);
+  transition:
+    transform ease var(--animation-time, 200ms),
+    opacity ease 0ms 200ms;
+  transform: translateX(100%);
+  opacity: 0;
+}
+
+.tab:not(.is-active)::after {
+  transform: translateY(100%);
+}
+
+
+.tab.is-active::after {
+  transform: translateX(0%);
+  opacity: 1;
+}
+
+
+.page-tabs-wrapper {
+  display: flex;
+  border-radius: 6px 6px 0 0;
+}
+
+.tabs-content {
+  height: 200px;
+  border-radius: 0 0 6px 6px;
+  background-color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 90px;
+}
+
+.tabs {
+  display: inline-flex;
+  justify-content: center;
+}
+
+.tab {
+  --underline-color: #BF63E5;
+  --underline-size: 5px;
+  color: inherit;
+  font-family: system-ui, sans-serif;
   padding: 20px;
+  text-decoration: none;
+  white-space: nowrap;
+  line-height: 1;
+}
+
+.page-content-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.btn-outline {
+  border: 2px solid #BF63E5;
+  border-radius: 10px;
+  padding: 5px;
+  width: 150px;
+  background: none;
+  font-family: 'Fira Sans', sans-serif;
+  font-weight: 500;
+}
+
+.btn-outline:hover {
+  background-color: #BF63E5;
+  color: white;
 }

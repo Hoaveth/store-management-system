@@ -1,6 +1,13 @@
 import axios from "axios";
+import { PERSISTED_STATE_KEY } from "../../utils/constants";
 
 const API_URL = "api/users/";
+
+//Register User
+const login = async (userData) => {
+  const response = await axios.post(API_URL + "login", userData);
+  return response.data;
+};
 
 //Register User
 const register = async (userData) => {
@@ -8,8 +15,15 @@ const register = async (userData) => {
   return response.data;
 };
 
+//Logout User
+const logout = async () => {
+  localStorage.removeItem(PERSISTED_STATE_KEY);
+};
+
 const authService = {
   register,
+  logout,
+  login,
 };
 
 export default authService;
