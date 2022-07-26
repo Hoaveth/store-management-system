@@ -11,7 +11,10 @@ connectDB();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(errorHandler);
+
+//Routes
 app.use("/api/users", require("./routes/userRoutes"));
+app.use("/api/check_management", require("./routes/checkRoutes"));
 
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "http://localhost:3000"); // update to match the domain you will make the request from
