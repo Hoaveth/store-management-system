@@ -1,6 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit";
+
 //reducers
 import authReducer from "../features/auth/authSlice";
+import supplierReducer from "../features/check_management/supplierSlice";
+import checkReducer from "../features/check_management/checkSlice";
+
 import logger from "redux-logger";
 import throttle from "lodash/throttle";
 import { PERSISTED_STATE_KEY } from "../utils/constants";
@@ -8,6 +12,8 @@ import { PERSISTED_STATE_KEY } from "../utils/constants";
 //set all reducer
 const reducer = {
   auth: authReducer,
+  suppliers: supplierReducer,
+  checks: checkReducer,
 };
 
 //Store methods

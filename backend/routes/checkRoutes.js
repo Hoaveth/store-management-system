@@ -4,9 +4,13 @@ const {
   addSupplier,
   getAllSupplier,
   getSupplier,
-  addTransaction,
-  getAllTransaction,
-  getTransaction,
+  addCheckTransaction,
+  deleteCheckTransaction,
+  getAllCheckTransaction,
+  getCheckTransaction,
+  updateSupplier,
+  deleteSupplier,
+  updateCheckTransaction,
 } = require("../controllers/checkController");
 
 const { protect } = require("../middleware/authMiddleware");
@@ -15,10 +19,14 @@ const { protect } = require("../middleware/authMiddleware");
 router.post("/add_supplier", protect, addSupplier);
 router.get("/get_all_supplier", protect, getAllSupplier);
 router.get("/get_supplier", protect, getSupplier);
+router.put("/update_supplier", protect, updateSupplier);
+router.delete("/delete_supplier", protect, deleteSupplier);
 
 //transactions
-router.post("/add_transaction", protect, addTransaction);
-router.get("/get_all_transaction", protect, getAllTransaction);
-router.get("/get_transaction", protect, getTransaction);
+router.post("/add_check_transaction", protect, addCheckTransaction);
+router.get("/get_all_check_transaction", protect, getAllCheckTransaction);
+router.get("/get_check_transaction", protect, getCheckTransaction);
+router.put("/update_check_transaction", protect, updateCheckTransaction);
+router.delete("/delete_check_transaction", protect, deleteCheckTransaction);
 
 module.exports = router;

@@ -1,17 +1,16 @@
-import axios from "axios";
 import { PERSISTED_STATE_KEY } from "../../utils/constants";
 import apiService from "../../utils/apiService";
-const API_URL = "api/users/";
+import { USERS_API } from "../../utils/api";
 
 //Register User
 const login = async (userData) => {
-  const response = await apiService.post(API_URL + "login", userData);
+  const response = await apiService.post(USERS_API + "login", userData);
   return response.data;
 };
 
 //Register User
 const register = async (userData) => {
-  const response = await apiService.post(API_URL + "register", userData);
+  const response = await apiService.post(USERS_API + "register", userData);
   return response.data;
 };
 
