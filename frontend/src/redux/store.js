@@ -1,9 +1,9 @@
 import { configureStore } from "@reduxjs/toolkit";
+//reducers
+import authReducer from "../features/auth/authSlice";
 import logger from "redux-logger";
 import throttle from "lodash/throttle";
 import { PERSISTED_STATE_KEY } from "../utils/constants";
-//reducers
-import authReducer from "../features/auth/authSlice";
 
 //set all reducer
 const reducer = {
