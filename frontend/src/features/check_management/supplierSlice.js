@@ -13,9 +13,27 @@ const initialState = {
 //Register user
 export const addSupplier = createAsyncThunk(
   "check_management/add_supplier",
-  async (user, thunkAPI) => {
+  async (supplier, thunkAPI) => {
     try {
-      return await supplierService.login(user);
+      return await supplierService.addSupplier(supplier);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+//Get suppliers
+export const getAllSuppliers = createAsyncThunk(
+  "check_management/get_all_suppliers",
+  async ({}, thunkAPI) => {
+    try {
+      return await supplierService.getAllSupplier();
     } catch (error) {
       const message =
         (error.response &&

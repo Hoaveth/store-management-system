@@ -5,6 +5,11 @@ import { USERS_API } from "../../utils/api";
 //Register User
 const login = async (userData) => {
   const response = await apiService.post(USERS_API + "login", userData);
+
+  //save token to localstorage
+  const jwt_token = response.data.token;
+  localStorage.setItem("access_token", jwt_token);
+
   return response.data;
 };
 

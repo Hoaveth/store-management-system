@@ -1,0 +1,27 @@
+.table-template {
+    margin-top: 20px
+}
+
+.table-template-header {
+    color: black;
+    text-align: center;
+    box-shadow: 0 0 2px 2px gainsboro;
+
+}
+
+
+.table-template-colored {
+    color: black
+}
+
+
+
+.table-template {
+    text-align: center;
+}
+
+.table-template-button {
+    color: blue !important;
+    text-decoration: none;
+    padding: 0 !important;
+}
