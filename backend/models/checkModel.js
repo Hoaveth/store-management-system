@@ -2,10 +2,6 @@ const mongoose = require("mongoose");
 
 const checkSchema = mongoose.Schema(
   {
-    checkData: {
-      type: Number,
-      required: [false, "Please add supplier term"],
-    },
     checkDate: {
       type: Date,
       required: [false, "Please add check date"],
@@ -13,6 +9,15 @@ const checkSchema = mongoose.Schema(
     issueDate: {
       type: Date,
       required: [true, "Please add issue date"],
+    },
+    amount: {
+      type: Number,
+      required: [true, "Please add an amount"],
+    },
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: "User",
     },
   },
   { timestamps: true }
