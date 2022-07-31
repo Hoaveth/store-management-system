@@ -1,26 +1,24 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
+import PageHeader from "../../components/PageHeader";
 import { addCheckTransaction } from "../../features/check_management/checkSlice";
-import {
-  addSupplier,
-  reset,
-} from "../../features/check_management/supplierSlice";
+import { reset } from "../../features/check_management/checkSlice";
 import { EMPTY_STRING } from "../../utils/constants";
 
 const AddTransaction = () => {
   const { user_auth } = useSelector((state) => state.auth);
+  const { suppliers } = useSelector((state) => state.suppliers);
+
   const [formData, setFormData] = useState({
     issueDate: null,
     checkDate: null,
     amount: null,
     supplierId: null,
-    userId: user_auth.userId,
+    userId: user_auth._id,
   });
   const { issueDate, checkDate, amount, supplierId, userId } = formData;
-  const { isLoading, isError, isSuccess, message } = useSelector(
-    (state) => state.suppliers
-  );
+  const { isError, isSuccess, error } = useSelector((state) => state.checks);
 
   const dispatch = useDispatch();
 
@@ -55,17 +53,40 @@ const AddTransaction = () => {
         amount: null,
         userId: user_auth.userId,
       }));
+      dispatch(reset());
+    }
+
+    if (isError || error) {
+      toast.error(error.message);
     }
 
     dispatch(reset());
-  }, [isError, isSuccess, message, dispatch]);
+  }, [user_auth._id, isError, isSuccess, error, dispatch]);
 
   return (
     <main>
-      <div className="page-header">
-        <span className="page-title">Add Transaction</span>
-      </div>
+      <PageHeader page="Check Management" />
+      <hr />
       <form onSubmit={handleSubmit}>
+        <div className="form-header">
+          <span className="form-title"> Check Transaction</span>
+        </div>
+        <div className="mb-3">
+          <label>Supplier </label>
+          <select
+            className="form-control"
+            onChange={handleInputChange}
+            aria-label="Default select example"
+            name="supplierId"
+            defaultValue={{ label: "Select Dept", value: 0 }}
+          >
+            <option value={EMPTY_STRING}>Choose a supplier</option>
+            {suppliers &&
+              suppliers.map((item) => (
+                <option value={item._id}>{item.supplierName}</option>
+              ))}
+          </select>
+        </div>
         <div className="mb-3">
           <label>Issue Date</label>
           <input
@@ -91,17 +112,19 @@ const AddTransaction = () => {
         <div className="mb-3">
           <label>Total Amount</label>
           <input
-            type="date"
+            type="number"
             name="amount"
             className="form-control"
             placeholder="Enter total amount"
+            step="any"
+            min="0"
             onChange={handleInputChange}
             value={amount}
           />
         </div>
         <div className="mb-3">
-          <button type="submit" className="btn btn-primary">
-            Submit
+          <button type="submit" className="btn">
+            Add Check
           </button>
         </div>
       </form>

@@ -2,7 +2,33 @@ form {
     background: #ffffff;
     box-shadow: 0px 14px 80px rgba(34, 35, 58, 0.2);
     padding: 20px 35px 25px 35px;
-    margin: 50px 0;
+    margin: 50px auto;
     border-radius: 15px;
     transition: all .3s;
+    width: 50%;
+
+}
+
+form .btn {
+    background-color: #BF63E5;
+    border: none;
+    width: 100%;
+    margin-top: 20px;
+    color: white;
+}
+
+form .btn:hover {
+    background-color: #9e3ec7;
+    border: none;
+    width: 100%;
+    margin-top: 20px
+}
+
+.form-header {
+    margin: 20px 0;
+}
+
+form .form-control {
+    padding-left: 5px;
+    padding-right: 4px;
 }

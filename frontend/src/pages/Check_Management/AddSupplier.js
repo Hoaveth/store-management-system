@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
+import PageHeader from "../../components/PageHeader";
 import {
   addSupplier,
   reset,
@@ -47,14 +48,17 @@ const AddSupplier = () => {
     }
 
     dispatch(reset());
-  }, [isError, isSuccess, message, dispatch]);
+  }, [isError, isSuccess, message, dispatch, isLoading]);
 
   return (
     <main>
-      <div className="page-header">
-        <span className="page-title">Add Supplier</span>
-      </div>
+      <PageHeader page="Check Management" />
+      <hr />
+
       <form onSubmit={handleSubmit}>
+        <div className="form-header">
+          <span className="form-title">Add Supplier</span>
+        </div>
         <div className="mb-3">
           <label>Supplier Name</label>
           <input

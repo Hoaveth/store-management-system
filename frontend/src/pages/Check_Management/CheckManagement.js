@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import PageHeader from "../../components/PageHeader";
 
 import "./CheckManagement.css";
 import CheckSupplier from "./CheckSupplier";
@@ -10,9 +11,7 @@ const CheckManagement = () => {
 
   return (
     <main>
-      <div className="page-header">
-        <span className="page-title">Check Management</span>
-      </div>
+      <PageHeader page="Check Management" />
       <div className="page-tabs-wrapper">
         <nav className="tabs">
           <div

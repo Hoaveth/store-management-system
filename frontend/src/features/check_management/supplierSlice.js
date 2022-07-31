@@ -31,7 +31,7 @@ export const addSupplier = createAsyncThunk(
 //Get suppliers
 export const getAllSuppliers = createAsyncThunk(
   "check_management/get_all_suppliers",
-  async ({}, thunkAPI) => {
+  async (thunkAPI) => {
     try {
       return await supplierService.getAllSupplier();
     } catch (error) {

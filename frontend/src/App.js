@@ -50,7 +50,7 @@ function App() {
               />
               <Route path="/credit_management" element={<CreditManagement />} />
             </Routes>
-            <ToastContainer />
+            <ToastContainer position="bottom-right" />
           </div>
         </div>
       </div>
