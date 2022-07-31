@@ -14,10 +14,15 @@ const checkSchema = mongoose.Schema(
       type: Number,
       required: [true, "Please add an amount"],
     },
-    user: {
+    userId: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
       ref: "User",
+    },
+    supplierId: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: "Supplier",
     },
   },
   { timestamps: true }

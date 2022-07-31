@@ -90,27 +90,35 @@ const deleteSupplier = asyncHandler(async (req, res) => {
 //@route POST /api/users/g
 //@access Public
 const addCheckTransaction = asyncHandler(async (req, res) => {
-  const { supplierName, supplierTerm } = req.body;
+  const { checkDate, issueDate, amount, userId, supplierId } = req.body;
 
-  if (!supplierName || !supplierTerm) {
-    res.status(400);
+  if (!checkDate || !issueDate || !userId || !amount || !supplierId) {
+    res
+      .status(400)
+      .json({ statusCode: 400, message: "Please add all fields." });
     throw new Error("Please add all fields");
   }
 
   //create supplier
-  const supplier = await Supplier.create({
-    supplierName,
-    supplierTerm,
+  const check = await Check.create({
+    checkDate,
+    issueDate,
+    amount,
+    supplierId,
+    userId,
   });
 
-  if (supplier) {
+  if (check) {
     res.status(201).json({
-      _id: supplier.id,
-      supplierName: supplier.supplierName,
-      supplierTerm: supplier.supplierTerm,
+      _id: check.id,
+      checkDate: check.checkDate,
+      issueDate: check.issueDate,
+      amount: check.amount,
+      supplierId: check.supplierId,
+      userId: check.userId,
     });
   } else {
-    res.status(400);
+    res.status(400).json({ statusCode: 400, message: "Invalid data." });
     throw new Error("Invalid User data");
   }
 });
