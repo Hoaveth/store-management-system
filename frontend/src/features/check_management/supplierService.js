@@ -12,7 +12,7 @@ const addSupplier = async (supplierData) => {
 
 //Update Supplier
 const updateSupplier = async (supplierData) => {
-  const response = await apiService.post(
+  const response = await apiService.put(
     CHECK_MGT_API + "update_supplier",
     supplierData
   );
@@ -21,7 +21,7 @@ const updateSupplier = async (supplierData) => {
 
 //Delete Supplier
 const deleteSupplier = async (supplierData) => {
-  const response = await apiService.post(
+  const response = await apiService.delete(
     CHECK_MGT_API + "delete_supplier",
     supplierData
   );
@@ -29,17 +29,16 @@ const deleteSupplier = async (supplierData) => {
 };
 
 //Get supplier
-const getSupplier = async (supplierData) => {
-  const response = await apiService.post(
-    CHECK_MGT_API + "get_supplier",
-    supplierData
+const getSupplier = async (supplierId) => {
+  const response = await apiService.get(
+    CHECK_MGT_API + `get_supplier?supplierId=${supplierId}`
   );
   return response.data;
 };
 
 //All Supplier
 const getAllSupplier = async () => {
-  const response = await apiService.post(CHECK_MGT_API + "get_all_supplier");
+  const response = await apiService.get(CHECK_MGT_API + "get_all_supplier");
   return response.data;
 };
 

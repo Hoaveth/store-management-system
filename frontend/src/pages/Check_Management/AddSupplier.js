@@ -9,14 +9,19 @@ import {
 import { EMPTY_STRING } from "../../utils/constants";
 
 const AddSupplier = () => {
+  const { user_auth } = useSelector((state) => state.auth);
+
+  const { isLoading, isError, isAddSuccess, message } = useSelector(
+    (state) => state.suppliers
+  );
+
   const [formData, setFormData] = useState({
     supplierName: EMPTY_STRING,
     supplierTerm: EMPTY_STRING,
+    userId: user_auth._id,
+    userName: user_auth.userName,
   });
-  const { supplierName, supplierTerm } = formData;
-  const { isLoading, isError, isSuccess, message } = useSelector(
-    (state) => state.suppliers
-  );
+  const { supplierName, supplierTerm, userId, userName } = formData;
 
   const dispatch = useDispatch();
 
@@ -26,6 +31,8 @@ const AddSupplier = () => {
     const supplierData = {
       supplierName,
       supplierTerm,
+      userId,
+      userName,
     };
 
     dispatch(addSupplier(supplierData));
@@ -39,7 +46,7 @@ const AddSupplier = () => {
   };
 
   useEffect(() => {
-    if (isSuccess) {
+    if (isAddSuccess) {
       toast.success("Added successfully");
       setFormData(() => ({
         supplierName: EMPTY_STRING,
@@ -48,7 +55,7 @@ const AddSupplier = () => {
     }
 
     dispatch(reset());
-  }, [isError, isSuccess, message, dispatch, isLoading]);
+  }, [isError, isAddSuccess, message, dispatch, isLoading]);
 
   return (
     <main>

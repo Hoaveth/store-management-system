@@ -1,6 +1,7 @@
 import React from "react";
 import { Table, Button, ButtonToolbar } from "react-bootstrap";
 import "./styles/Table.css";
+import moment from "moment";
 
 let TableTemplate = (props) => {
   //Renders table header
@@ -40,7 +41,10 @@ let TableTemplate = (props) => {
             (column.center ? " table-template-centered" : "")
           }
         >
-          {data[column.key]}
+          {(column.key === "issueDate" || column.key === "checkDate") &&
+          data[column.key] !== undefined
+            ? moment(data[column.key]).format("MM-DD-YYYY")
+            : data[column.key]}
         </td>
       );
     });

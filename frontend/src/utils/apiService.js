@@ -18,8 +18,17 @@ class ApiService {
     this.service = service;
   }
 
-  get(path) {
-    return this.service.get(path);
+  get(path, payload) {
+    return this.service
+      .request({
+        method: "GET",
+        url: path,
+        responseType: "json",
+        data: payload,
+      })
+      .then((response) => {
+        return response;
+      });
   }
 
   put(path, payload) {

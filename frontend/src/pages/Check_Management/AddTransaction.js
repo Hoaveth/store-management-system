@@ -1,26 +1,46 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import PageHeader from "../../components/PageHeader";
 import { addCheckTransaction } from "../../features/check_management/checkSlice";
 import { reset } from "../../features/check_management/checkSlice";
+import { getSupplier } from "../../features/check_management/supplierSlice";
 import { EMPTY_STRING } from "../../utils/constants";
 
 const AddTransaction = () => {
+  const initialState = {
+    issueDate: "",
+    checkDate: "",
+    amount: "",
+    supplierId: null,
+    supplierName: "",
+    userId: null,
+    userName: "",
+  };
+
+  const [
+    {
+      issueDate,
+      checkDate,
+      amount,
+      supplierId,
+      userId,
+      userName,
+      supplierName,
+    },
+    setFormState,
+  ] = useState(initialState);
+
   const { user_auth } = useSelector((state) => state.auth);
   const { suppliers } = useSelector((state) => state.suppliers);
+  const { isError, isAddSuccess, error } = useSelector((state) => state.checks);
 
-  const [formData, setFormData] = useState({
-    issueDate: null,
-    checkDate: null,
-    amount: null,
-    supplierId: null,
-    userId: user_auth._id,
-  });
-  const { issueDate, checkDate, amount, supplierId, userId } = formData;
-  const { isError, isSuccess, error } = useSelector((state) => state.checks);
-
+  const selectInputRef = useRef();
   const dispatch = useDispatch();
+
+  const clearState = () => {
+    setFormState({ ...initialState });
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -30,29 +50,24 @@ const AddTransaction = () => {
       checkDate,
       amount,
       supplierId,
-      userId,
+      userId: user_auth._id,
+      userName: user_auth.userName,
+      supplierName,
     };
 
     dispatch(addCheckTransaction(transactionData));
   };
 
   const handleInputChange = (e) => {
-    setFormData((prevState) => ({
-      ...prevState,
-      [e.target.name]: e.target.value,
-    }));
+    const { name, value } = e.target;
+    setFormState((prevState) => ({ ...prevState, [name]: value }));
   };
 
   useEffect(() => {
-    if (isSuccess) {
+    if (isAddSuccess) {
       toast.success("Added successfully");
-      setFormData(() => ({
-        issueDate: null,
-        checkDate: null,
-        supplierId: null,
-        amount: null,
-        userId: user_auth.userId,
-      }));
+      clearState();
+      selectInputRef.current.selectedIndex = 0;
       dispatch(reset());
     }
 
@@ -61,7 +76,19 @@ const AddTransaction = () => {
     }
 
     dispatch(reset());
-  }, [user_auth._id, isError, isSuccess, error, dispatch]);
+  }, [user_auth.userId, isError, isAddSuccess, error, dispatch]);
+
+  useEffect(() => {
+    if (supplierId !== null) {
+      let supplier = suppliers.filter(
+        (supplier) => supplier._id === supplierId
+      );
+      setFormState((prevState) => ({
+        ...prevState,
+        supplierName: supplier[0].supplierName,
+      }));
+    }
+  }, supplierId);
 
   return (
     <main>
@@ -74,13 +101,14 @@ const AddTransaction = () => {
         <div className="mb-3">
           <label>Supplier </label>
           <select
+            ref={selectInputRef}
             className="form-control"
             onChange={handleInputChange}
             aria-label="Default select example"
             name="supplierId"
-            defaultValue={{ label: "Select Dept", value: 0 }}
+            value={supplierId || ""}
           >
-            <option value={EMPTY_STRING}>Choose a supplier</option>
+            <option value={null}>Choose a supplier</option>
             {suppliers &&
               suppliers.map((item) => (
                 <option value={item._id}>{item.supplierName}</option>

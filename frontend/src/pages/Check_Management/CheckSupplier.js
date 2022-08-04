@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import TableTemplate from "../../components/TableTemplate";
@@ -8,14 +8,15 @@ import { suppliersTable } from "../../utils/template";
 const CheckSupplier = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
   const suppliers = useSelector((state) => state.suppliers.suppliers);
 
   useEffect(() => {
     dispatch(getAllSuppliers());
-  }, []);
+  }, [dispatch]);
 
   return (
-    <div>
+    <>
       <div className="page-content-header">
         <span className="page-content-title">Suppliers</span>
         <button
@@ -45,7 +46,7 @@ const CheckSupplier = () => {
           ]}
         />
       </div>
-    </div>
+    </>
   );
 };
 

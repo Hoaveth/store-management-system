@@ -12,7 +12,7 @@ const addCheckTransaction = async (checkData) => {
 
 //Update check
 const updateCheckTransaction = async (checkData) => {
-  const response = await apiService.post(
+  const response = await apiService.put(
     CHECK_MGT_API + "update_check_transaction",
     checkData
   );
@@ -21,7 +21,7 @@ const updateCheckTransaction = async (checkData) => {
 
 //Delete check
 const deleteCheckTransaction = async (checkData) => {
-  const response = await apiService.post(
+  const response = await apiService.delete(
     CHECK_MGT_API + "delete_check_transaction",
     checkData
   );
@@ -30,7 +30,7 @@ const deleteCheckTransaction = async (checkData) => {
 
 //Get check
 const getCheckTransaction = async (checkData) => {
-  const response = await apiService.post(
+  const response = await apiService.get(
     CHECK_MGT_API + "get_check_transaction",
     checkData
   );
@@ -39,7 +39,7 @@ const getCheckTransaction = async (checkData) => {
 
 //All check
 const getAllCheckTransaction = async () => {
-  const response = await apiService.post(
+  const response = await apiService.get(
     CHECK_MGT_API + "get_all_check_transaction"
   );
   return response.data;

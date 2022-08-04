@@ -4,8 +4,10 @@ import supplierService from "./supplierService";
 
 const initialState = {
   suppliers: [],
+  selectedSupplier: null,
   isLoading: false,
-  isSuccess: false,
+  isFetchSuccess: false,
+  isAddSuccess: false,
   isError: false,
   message: EMPTY_STRING,
 };
@@ -31,9 +33,27 @@ export const addSupplier = createAsyncThunk(
 //Get suppliers
 export const getAllSuppliers = createAsyncThunk(
   "check_management/get_all_suppliers",
-  async (thunkAPI) => {
+  async (supplier, thunkAPI) => {
     try {
       return await supplierService.getAllSupplier();
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+//Get suppliers
+export const getSupplier = createAsyncThunk(
+  "check_management/get_supplier",
+  async (supplier, thunkAPI) => {
+    try {
+      return await supplierService.getSupplier(supplier);
     } catch (error) {
       const message =
         (error.response &&
@@ -52,7 +72,8 @@ const supplierSlice = createSlice({
   reducers: {
     reset: (state) => {
       state.isLoading = false;
-      state.isSuccess = false;
+      state.isFetchSuccess = false;
+      state.isAddSuccess = false;
       state.isError = false;
       state.message = EMPTY_STRING;
     },
@@ -64,10 +85,23 @@ const supplierSlice = createSlice({
       })
       .addCase(addSupplier.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.isSuccess = true;
+        state.isAddSuccess = true;
         state.suppliers.push(action.payload);
       })
       .addCase(addSupplier.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
+      })
+      .addCase(getAllSuppliers.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getAllSuppliers.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isFetchSuccess = true;
+        state.suppliers = action.payload;
+      })
+      .addCase(getAllSuppliers.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload;
