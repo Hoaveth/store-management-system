@@ -10,10 +10,14 @@ const supplierSchema = mongoose.Schema(
       type: Number,
       required: [false, "Please add supplier term"],
     },
-    user: {
+    userId: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
       ref: "User",
+    },
+    userName: {
+      type: String,
+      required: true,
     },
   },
   { timestamps: true }

@@ -1,7 +1,7 @@
+const mongoose = require("mongoose");
 const asyncHandler = require("express-async-handler");
 const Supplier = require("../models/supplierModel");
 const Check = require("../models/checkModel");
-
 //@desc register new supplier
 //@route POST /api/users/add_supplier
 //@access Public
@@ -35,7 +35,9 @@ const addSupplier = asyncHandler(async (req, res) => {
 //@route POST /api/users/get_supplier
 //@access Public
 const getSupplier = asyncHandler(async (req, res) => {
-  const supplier = await Supplier.findById(req.params.id);
+  const { supplierId } = req.query;
+
+  const supplier = await Supplier.findById(mongoose.Types.ObjectId(supplierId));
   //return all data
   res.status(200).json(supplier);
 });
@@ -90,9 +92,25 @@ const deleteSupplier = asyncHandler(async (req, res) => {
 //@route POST /api/users/g
 //@access Public
 const addCheckTransaction = asyncHandler(async (req, res) => {
-  const { checkDate, issueDate, amount, userId, supplierId } = req.body;
+  const {
+    checkDate,
+    issueDate,
+    amount,
+    userId,
+    userName,
+    supplierId,
+    supplierName,
+  } = req.body;
 
-  if (!checkDate || !issueDate || !userId || !amount || !supplierId) {
+  if (
+    !checkDate ||
+    !issueDate ||
+    !userId ||
+    !amount ||
+    !supplierId ||
+    !userName ||
+    !supplierName
+  ) {
     res
       .status(400)
       .json({ statusCode: 400, message: "Please add all fields." });
@@ -105,7 +123,9 @@ const addCheckTransaction = asyncHandler(async (req, res) => {
     issueDate,
     amount,
     supplierId,
+    supplierName,
     userId,
+    userName,
   });
 
   if (check) {
@@ -115,7 +135,9 @@ const addCheckTransaction = asyncHandler(async (req, res) => {
       issueDate: check.issueDate,
       amount: check.amount,
       supplierId: check.supplierId,
+      supplierName: check.supplierName,
       userId: check.userId,
+      userName: check.userName,
     });
   } else {
     res.status(400).json({ statusCode: 400, message: "Invalid data." });
