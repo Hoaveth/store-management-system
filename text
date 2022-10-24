@@ -1,0 +1,344 @@
+import React from 'react';
+import { FormLabel, FormGroup, Button, ButtonToolbar, FormCheck, Col, Row } from 'react-bootstrap';
+import DatePicker from 'react-datepicker';
+import moment from 'moment';
+import { Formik, Form, Field, FieldArray } from 'formik';
+import { DATE_FORMAT } from '../../../utils/constants';
+import { isNullOrUndefined } from '../../../utils/common';
+import 'react-datepicker/dist/react-datepicker.css';
+import './styles.scss';
+
+let FormTemplate = (props) => {
+    //Initial values
+    let initialValues = {};
+    let emptyInitialValues = isNullOrUndefined(props.initialValues);
+
+    let modelValues = {};
+    props.formInputs.form.map((input) => {
+
+        let propertyExist = !emptyInitialValues && props.initialValues[props.formInputs.model].hasOwnProperty(input.name)
+
+        if ("multiple-text" === input.type) {
+            input.children.map(child => {
+                if ("datepicker" === input.type) {
+                    (modelValues[input.name] = propertyExist ? moment(props.initialValues[props.formInputs.model][input.name]).format(DATE_FORMAT) : input.default)
+                }
+                else {
+                    let value = propertyExist ? props.initialValues[props.formInputs.model][input.name] : input.default;
+                    modelValues[input.name] = value;
+                }
+                return "";
+            })
+        }
+        else if ("datepicker" === input.type) {
+            (modelValues[input.name] = propertyExist ? moment(props.initialValues[props.formInputs.model][input.name]).format(DATE_FORMAT) : input.default)
+        }
+        else {
+            let value = propertyExist ? props.initialValues[props.formInputs.model][input.name] : input.default;
+            modelValues[input.name] = value;
+        }
+        return "";
+    })
+    initialValues[props.formInputs.model] = modelValues;
+
+
+    let defaultClass = "form-input";
+
+    function RenderInput(model, input, fieldValue, setFieldValue, errors, touched) {
+        let modelField = `${model}.${input.name}`;
+        let modelTouch = touched[model];
+        let isTouched = undefined !== touched[model] && modelTouch[input.name];
+        let isError = undefined !== errors[modelField];
+        let displayError = isTouched && isError;
+
+        switch (input.type) {
+            //renders file upload
+            case "file": {
+                return (
+                    <FormGroup as={Row} key={modelField} className={defaultClass}>
+                        <FormLabel column sm="3" className="form-template-label">{input.label}</FormLabel>
+                        <Col sm="9">
+                            <input name={modelField} type="file" onChange={(event) => {
+                                setFieldValue(modelField, event.target.files[0]);
+                            }} />
+                        </Col>
+                    </FormGroup>
+                );
+            }
+
+            //renders radio button group field
+            case "radio": {
+                return (
+                    <FormGroup as={Row} key={modelField} className={defaultClass}>
+                        <FormLabel column sm="3" className="form-template-label">{input.label}</FormLabel>
+                        {CustomError(errors[modelField], displayError)}
+
+                        <Col sm="9">
+                            {props.radioInput.map((radio, index) => {
+                                if (radio.name === input.name) {
+                                    return (
+                                        <FormCheck
+                                            id={input.name + index}
+                                            type="radio"
+                                            inline={input.inline}
+                                            key={index}
+                                            value={radio.value}
+                                            name={modelField}
+                                            onChange={event => setFieldValue(modelField, event.target.value)}
+                                            checked={fieldValue.toString() === radio.value.toString()}
+                                            label={radio.label}
+                                        />
+                                    );
+                                }
+
+                                return null;
+                            })}
+                        </Col>
+                    </FormGroup>
+                )
+            }
+
+
+            //renders single checkbox field
+            case "checkbox": {
+                return (
+                    <FormGroup as={Row} key={modelField} className={defaultClass}>
+                        <FormLabel column sm="3" className="form-template-label">{input.label}</FormLabel>
+                        {CustomError(errors[modelField], displayError)}
+                        <Col sm="9">
+                            <FormCheck
+                                id={input.name + input.value}
+                                type="checkbox"
+                                style={{ cursor: "pointer" }}
+                                value={input.value}
+                                name={modelField}
+                                onChange={() => setFieldValue(modelField, !fieldValue)}
+                                checked={fieldValue}
+                                label={input.label}
+                            />
+                        </Col>
+                    </FormGroup>
+                )
+            }
+
+            //renders multiple checkbox field
+            case "multi-checkbox": {
+                return (
+                    <FormGroup as={Row} key={modelField} className={defaultClass}>
+                        <FormLabel column sm="3" className="form-template-label">{input.label}</FormLabel>
+                        {CustomError(errors[modelField], displayError)}
+
+                        <Col sm="9">
+                            <FieldArray
+                                name={modelField}
+                                render={arrayHelpers => (
+                                    <div>
+                                        {props.checkboxInput.map((checkbox, index) => {
+                                            if (input.name === checkbox.name) {
+                                                return (
+                                                    <FormCheck
+                                                        id={input.name + index}
+                                                        type="checkbox"
+                                                        style={{ cursor: "pointer" }}
+                                                        key={index}
+                                                        name={modelField}
+                                                        value={checkbox.value}
+                                                        inline={input.inline}
+                                                        checked={0 <= fieldValue.indexOf(checkbox.value)}
+                                                        onChange={event => {
+                                                            if (event.target.checked) {
+                                                                arrayHelpers.push(checkbox.value)
+                                                            } else {
+                                                                let checkIndex = fieldValue.indexOf(checkbox.value);
+                                                                arrayHelpers.remove(checkIndex);
+                                                            }
+                                                        }}
+                                                        label={checkbox.label}
+                                                    />
+                                                )
+                                            }
+
+                                            return null;
+                                        })}
+                                    </div>
+                                )}
+                            />
+                        </Col>
+                    </FormGroup>
+                )
+            }
+
+            //renders datepicker field
+            case "datepicker": {
+                let dateValue = moment(fieldValue, input.format).isValid() ? moment(fieldValue, input.format) : null;
+
+                return (
+                    <FormGroup as={Row} key={modelField} className={defaultClass}>
+                        <FormLabel column sm="3" className="form-template-label">{input.label}</FormLabel>
+                        {CustomError(errors[modelField], displayError)}
+
+                        <Col sm="9">
+                            <DatePicker
+                                className={displayError ? "form-error form-control" : "form-control"}
+                                name={modelField}
+                                selected={dateValue.toDate()}
+                                onChangeRaw={(event) => event.preventDefault()}
+                                onChange={newValue => setFieldValue(modelField, moment(newValue).format(DATE_FORMAT))}
+                                placeholderText={input.placeholder}
+                            />
+                        </Col>
+                    </FormGroup>
+                );
+            }
+
+            // renders select field
+            case "select": {
+                return (
+                    <FormGroup as={Row} key={modelField} className={defaultClass}>
+                        <FormLabel column sm="3" className="form-template-label">{input.label}</FormLabel>
+                        {CustomError(errors[modelField], displayError)}
+
+                        <Col sm="9">
+                            <Field
+                                className={displayError ? "form-control form-error" : "form-control"}
+                                component="select"
+                                name={modelField}
+                            >
+                                <option disabled value="">{input.placeholder}</option>
+                                {props.selectInput && props.selectInput.filter((option) => option.name === input.name).map((item, i) => {
+                                    return (
+                                        <option key={i} value={item.value}> {item.label} </option>
+                                    );
+                                })}
+                            </Field>
+                        </Col>
+                    </FormGroup>
+                );
+            }
+
+            case "multiple-text": {
+                return (
+                    <FormGroup as={Row} key={modelField} className={defaultClass}>
+                        <FormLabel column sm="3" className="form-template-label">{input.label}</FormLabel>
+                        {CustomError(errors[modelField], displayError)}
+                        <Col sm="9" style={{ display: 'flex', alignItems: 'center' }}>
+                            {input.children.map(child => {
+                                return (RenderInput(model, child, fieldValue, setFieldValue, errors, touched))
+                            })}
+                        </Col>
+                    </FormGroup>
+                )
+            }
+
+            case "custom-text-date": {
+                return (
+                    <div key={modelField}>
+                        <Col style={{ display: 'flex', alignItems: 'center', width: input.width, paddingLeft: 0 }}>
+                            <Field
+                                disabled={"id" === input.name && props.isEditMode}
+                                className={displayError ? "form-control form-error" : "form-control"}
+                                placeholder={input.placeholder}
+                                component={input.component}
+                                type={"number"}
+                                name={modelField}
+                                min={input.min}
+                                max={input.max}
+                                onChange={event => {
+                                    if("" === event.target.value || (event.target.value >= input.min && event.target.value <= input.max)){
+                                        setFieldValue(modelField, event.target.value)
+                                    }
+                                }}
+                            />
+                            <span style={{ marginLeft: 4 }}>{input.label}</span>
+                        </Col>
+                    </div>
+                )
+            }
+
+            //renders text, textarea, email, password, numbers, default input
+            default: {
+                return (
+                    <FormGroup as={Row} key={modelField} className={defaultClass}>
+                        <FormLabel column sm="3" className="form-template-label">{input.label}</FormLabel>
+                        {CustomError(errors[modelField], displayError)}
+                        <Col sm="9" style={{ display: 'flex', alignItems: 'center' }}>
+                            <Field
+                                disabled={"id" === input.name && props.isEditMode}
+                                className={displayError ? "form-control form-error" : "form-control"}
+                                placeholder={input.placeholder}
+                                component={input.component}
+                                type={input.type}
+                                name={modelField}
+                                maxLength={input.maxLength}
+                                minLength={input.minLength}
+                                min={input.min}
+                                max={input.max}
+                                onChange={event => setFieldValue(modelField, event.target.value)}
+                            />
+                        </Col>
+                    </FormGroup>
+                );
+            }
+        }
+
+    }
+
+    //Error messages
+    const CustomError = (error, displayError) => {
+        return displayError ? <p className="formik-error">{error}</p> : null;
+    }
+
+    //Renders form buttons
+    const FormButtons = props.formButtons && props.formButtons.map((button, i) => {
+        return (
+            <Button type={button.submit ? "submit" : "button"} key={i} className={"form-template-button-" + button.type} size={button.size} onClick={button.onClick}>
+                {button.label}
+            </Button>
+        );
+    });
+
+    //Maps form inputs
+    const FormInputs = (values, setFieldValue, errors, touched) => props.formInputs.form && props.formInputs.form.map((input) => {
+        return RenderInput(props.formInputs.model, input, values[props.formInputs.model][input.name], setFieldValue, errors, touched)
+    });
+
+    const FormTitle = ({ title }) => {
+        return (
+            <p className="form-template-title">{title}</p>
+        )
+    }
+
+    if ((!isNullOrUndefined(props.initialValues) && props.editMode) || !props.editMode) {
+        const { bindSubmitFormik } = props;
+        return (
+            <React.Fragment>
+                <FormTitle title={"お知らせ [作成・編集]"} />
+                <Formik
+                    ref={node => (!isNullOrUndefined(props.updateFormRef) && props.updateFormRef(node))}
+                    initialValues={initialValues}
+                    className={props.className}
+                    validate={values => {
+                        return props.validate(values);
+                    }}
+                    onSubmit={(values) => {
+                        props.handleSubmit(values)
+                    }}
+                >
+                    {({ values, setFieldValue, errors, touched, submitForm, resetForm }) => (
+                        <Form>
+                            {!isNullOrUndefined(bindSubmitFormik) && bindSubmitFormik(submitForm, resetForm)}
+                            {FormInputs(values, setFieldValue, errors, touched)}
+                            <ButtonToolbar className="form-template-button-group">
+                                {FormButtons}
+                            </ButtonToolbar>
+                        </Form>
+                    )}
+                </Formik>
+            </React.Fragment>
+        );
+    } else {
+        return <p>Loading . . .</p>;
+    }
+}
+
+export default FormTemplate;
